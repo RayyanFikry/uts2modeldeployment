@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import pickle  # masih dipakai untuk scaler
+import pickle  
 from sklearn.preprocessing import StandardScaler
 from joblib import load
 
@@ -10,22 +10,15 @@ st.title('Loan Prediction App')
 model = load('best_rf_model.pkl')
 scaler = load('scaler.pkl')
 
-def predict_loan_status(features):
-    # Encode fitur kategorikal
-    encoded_features = [
-        categorical_features['person_gender'][features[1]], 
-        categorical_features['person_education'][features[2]],  
-        categorical_features['person_home_ownership'][features[5]], 
-        categorical_features['loan_intent'][features[7]]
-    ] + features[0:1] + features[3:5] + features[6:8] + features[9:]
-
-    # Buat DataFrame dan skalakan hanya fitur numerik
+def predict_loan_status(encoded_features):
+    # encoded_features sudah dalam bentuk numerik 
     features_df = pd.DataFrame([encoded_features])
     scaled_features = scaler.transform(features_df)
-
+    
     # Prediksi
     prediction = model.predict(scaled_features)
     return prediction[0]
+
 
 # Input dari pengguna
 person_age = st.number_input('Age of the Person', min_value=18, max_value=100, step=1)
