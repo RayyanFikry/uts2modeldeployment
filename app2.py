@@ -1,14 +1,18 @@
 import streamlit as st
 import pandas as pd
-import pickle
+import pickle  # masih dipakai untuk scaler
 from sklearn.preprocessing import StandardScaler
 from joblib import load
 
 st.title('Loan Prediction App')
 
+# Load model dan scaler yang sudah dilatih
 model = load('best_rf_model.pkl')
+with open('scaler.pkl', 'rb') as scaler_file:
+    scaler = pickle.load(scaler_file)
 
 def predict_loan_status(features):
+    # Encode fitur kategorikal
     encoded_features = [
         categorical_features['person_gender'][features[1]], 
         categorical_features['person_education'][features[2]],  
@@ -16,14 +20,15 @@ def predict_loan_status(features):
         categorical_features['loan_intent'][features[7]]
     ] + features[0:1] + features[3:5] + features[6:8] + features[9:]
 
+    # Buat DataFrame dan skalakan hanya fitur numerik
     features_df = pd.DataFrame([encoded_features])
-    
-    scaler = StandardScaler()
     scaled_features = scaler.transform(features_df)
-    
+
+    # Prediksi
     prediction = model.predict(scaled_features)
     return prediction[0]
 
+# Input dari pengguna
 person_age = st.number_input('Age of the Person', min_value=18, max_value=100, step=1)
 person_gender = st.selectbox('Gender of the Person', ['Male', 'Female'])
 person_education = st.selectbox('Education Level', ['High School', 'Bachelors', 'Masters', 'PhD'])
@@ -54,6 +59,7 @@ input_features = [
     previous_loan_defaults_on_file
 ]
 
+# Dictionary untuk encode fitur kategorikal
 categorical_features = {
     'person_gender': {'Male': 1, 'Female': 0},
     'person_education': {'High School': 0, 'Bachelors': 1, 'Masters': 2, 'PhD': 3},
