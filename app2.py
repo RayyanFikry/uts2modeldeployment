@@ -67,7 +67,14 @@ categorical_features = {
 }
 
 if st.button('Predict Loan Status'):
-    prediction = predict_loan_status(input_features)
+    encoded_features = [
+        categorical_features['person_gender'][input_features[1]], 
+        categorical_features['person_education'][input_features[2]],  
+        categorical_features['person_home_ownership'][input_features[5]], 
+        categorical_features['loan_intent'][input_features[7]]
+    ] + input_features[0:1] + input_features[3:5] + input_features[6:8] + input_features[9:]
+
+    prediction = predict_loan_status(encoded_features)
     
     if prediction == 1:
         st.success('Loan Approved')
