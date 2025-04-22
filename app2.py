@@ -8,8 +8,7 @@ st.title('Loan Prediction App')
 
 # Load model dan scaler yang sudah dilatih
 model = load('best_rf_model.pkl')
-with open('scaler.pkl', 'rb') as scaler_file:
-    scaler = pickle.load(scaler_file)
+scaler = load('scaler.pkl')
 
 def predict_loan_status(features):
     # Encode fitur kategorikal
