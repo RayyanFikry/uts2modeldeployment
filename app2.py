@@ -19,7 +19,7 @@ def predict_loan_status(features):
     features_df = pd.DataFrame([encoded_features])
     
     scaler = StandardScaler()
-    scaled_features = scaler.fit_transform(features_df)
+    scaled_features = scaler.transform(features_df)
     
     prediction = model.predict(scaled_features)
     return prediction[0]
